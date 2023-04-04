@@ -12,10 +12,10 @@ var Router = func(router *gin.Engine) {
 	router.GET("/books/:id", controllers.GetBook)
 	router.PUT("/books/:id", controllers.EditBook)
 	router.DELETE("/books/:id", controllers.DeleteBook)
-
+	router.GET("/filter", controllers.FilteredBooks)
 	router.POST("/signup", controllers.Signup)
 	router.POST("/login", controllers.Login)
-	router.GET("/signout", controllers.SignOut)
+	router.GET("/logout", controllers.SignOut)
 	router.GET("/validate", middleware.RequireAuth, controllers.Validate)
 	err := router.Run()
 	if err != nil {

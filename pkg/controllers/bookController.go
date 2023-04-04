@@ -7,9 +7,8 @@ import (
 	"net/http"
 )
 
-var books []models.Book
-
 func GetBooks(c *gin.Context) {
+	var books []models.Book
 	initializers.GetDB().Find(&books)
 	c.JSON(http.StatusOK, gin.H{
 		"Books": books,
@@ -90,5 +89,23 @@ func DeleteBook(c *gin.Context) {
 	initializers.GetDB().Delete(&target, "id=?", id)
 	c.JSON(http.StatusOK, gin.H{
 		"Book": "removed",
+	})
+}
+
+func FilteredBooks(c *gin.Context) {
+	from := c.Query("from")
+	to := c.Query("to")
+	var books []models.Book
+	result := initializers.GetDB().Where("price >= ?", from).Where("price <= ?", to).Find(&books)
+
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "failed to get books between of prices",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": books,
 	})
 }
