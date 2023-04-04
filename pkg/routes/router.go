@@ -7,11 +7,11 @@ import (
 )
 
 var Router = func(router *gin.Engine) {
-	//route.HandleFunc("/books", controllers.GetBooks).Methods("GET")
-	//route.HandleFunc("/books", controllers.CreateBook).Methods("POST")
-	//route.HandleFunc("/books/{id}", controllers.GetBook).Methods("GET")
-	//route.HandleFunc("/books/{id}", controllers.EditBook).Methods("PUT")
-	//route.HandleFunc("/books/{id}", controllers.DeleteBook).Methods("DELETE")
+	router.GET("/books", controllers.GetBooks)
+	router.POST("/books", controllers.CreateBook)
+	router.GET("/books/:id", controllers.GetBook)
+	router.PUT("/books/:id", controllers.EditBook)
+	router.DELETE("/books/:id", controllers.DeleteBook)
 
 	router.POST("/signup", controllers.Signup)
 	router.POST("/login", controllers.Login)

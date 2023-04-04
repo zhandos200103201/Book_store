@@ -1,81 +1,94 @@
 package controllers
 
 import (
+	"Test2/initializers"
 	"Test2/pkg/models"
-	"Test2/pkg/utils"
-	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 var books []models.Book
 
-func GetBooks(w http.ResponseWriter, _ *http.Request) {
-	books := models.GetAllBooks()
-	res, _ := json.Marshal(books)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+func GetBooks(c *gin.Context) {
+	initializers.GetDB().Find(&books)
+	c.JSON(http.StatusOK, gin.H{
+		"Books": books,
+	})
 }
 
-func GetBook(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	bookId := params["id"]
-	Id, err := strconv.Atoi(bookId)
-	if err != nil {
-		fmt.Println("Error during the parsing")
+func GetBook(c *gin.Context) {
+	id := c.Param("id")
+	var target models.Book
+	initializers.GetDB().Find(&target, "id=?", id)
+	c.JSON(http.StatusOK, gin.H{
+		"Book": target,
+	})
+}
+
+func CreateBook(c *gin.Context) {
+	book := models.Book{}
+	if c.Bind(&book) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
 	}
-	targetBook, _ := models.GetBookById(int16(Id))
-	res, _ := json.Marshal(targetBook)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
-}
-
-func CreateBook(w http.ResponseWriter, r *http.Request) {
-	newBook := utils.ParseBody(r)
-	book := newBook.CreateBook()
-	res, _ := json.Marshal(book)
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
-}
-
-func EditBook(w http.ResponseWriter, r *http.Request) {
-	editBook := utils.ParseBody(r)
-	params := mux.Vars(r)
-	bookId := params["id"]
-	Id, err := strconv.ParseInt(bookId, 0, 0)
-	if err != nil {
-		fmt.Println("Error during the parsing")
+	result := initializers.GetDB().Create(&book)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to create a new book",
+		})
+		return
 	}
-	book, db := models.GetBookById(int16(Id))
-	book.Title = editBook.Title
-	book.Description = editBook.Description
-	book.Author = editBook.Author
-	book.Category = editBook.Category
-	book.Image = editBook.Image
-	book.Language = editBook.Language
-	book.Rating = editBook.Rating
-	book.Price = editBook.Price
-	db.Save(&book)
-	res, _ := json.Marshal(book)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-func DeleteBook(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	bookId := params["id"]
-	Id, err := strconv.ParseInt(bookId, 0, 0)
-	if err != nil {
-		fmt.Println("Error during the parsing")
+func EditBook(c *gin.Context) {
+	id := c.Param("id")
+	book := models.Book{}
+	if c.Bind(&book) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
 	}
-	targetBook := models.DeleteBook(int16(Id))
-	res, _ := json.Marshal(targetBook)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+
+	var target models.Book
+	initializers.GetDB().Find(&target, "id=?", id)
+	if book.Title != target.Title {
+		initializers.GetDB().Model(&target).Update("Title", book.Title)
+	}
+	if book.Description != target.Description {
+		initializers.GetDB().Model(&target).Update("Description", book.Description)
+	}
+	if book.Author != target.Author {
+		initializers.GetDB().Model(&target).Update("Author", book.Author)
+	}
+	if book.Rating != target.Rating {
+		initializers.GetDB().Model(&target).Update("Rating", book.Rating)
+	}
+	if book.Price != target.Price {
+		initializers.GetDB().Model(&target).Update("Price", book.Price)
+	}
+	if book.Language != target.Language {
+		initializers.GetDB().Model(&target).Update("Language", book.Language)
+	}
+	if book.Image != target.Image {
+		initializers.GetDB().Model(&target).Update("Image", book.Image)
+	}
+	if book.Category != target.Category {
+		initializers.GetDB().Model(&target).Update("Category", book.Category)
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"Edit": "Book successfully edited",
+	})
+}
+
+func DeleteBook(c *gin.Context) {
+	id := c.Param("id")
+	var target models.Book
+	initializers.GetDB().Delete(&target, "id=?", id)
+	c.JSON(http.StatusOK, gin.H{
+		"Book": "removed",
+	})
 }
