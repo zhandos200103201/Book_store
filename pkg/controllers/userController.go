@@ -3,6 +3,7 @@ package controllers
 import (
 	"Test2/initializers"
 	"Test2/pkg/models"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -10,17 +11,16 @@ import (
 	"time"
 )
 
-func Validate(c *gin.Context) {
+func GetUserEmail(c *gin.Context) string {
 	user, _ := c.Get("user")
-	c.JSON(http.StatusOK, gin.H{
-		"User": user,
-	})
+	return fmt.Sprint(user)
 }
 
 func Signup(c *gin.Context) {
 	var body struct {
 		Email    string
 		Password string
+		Username string
 	}
 
 	if c.Bind(&body) != nil {
@@ -38,7 +38,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Email: body.Email, Password: hashedPass}
+	user := models.User{Username: body.Username, Email: body.Email, Password: hashedPass}
 	result := initializers.GetDB().Create(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
