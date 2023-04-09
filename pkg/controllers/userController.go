@@ -16,6 +16,34 @@ func GetUserEmail(c *gin.Context) string {
 	return fmt.Sprint(user)
 }
 
+//func UserIsSeller(c *gin.Context) bool {
+//	user := models.User{}
+//	initializers.GetDB().First(&user, "email = ?", GetUserEmail(c))
+//	if user.Type == "Seller" {
+//		return true
+//	} else {
+//		return false
+//	}
+//}
+//func UserIsClient(c *gin.Context) bool {
+//	user := models.User{}
+//	initializers.GetDB().First(&user, "email = ?", GetUserEmail(c))
+//	if user.Type == "Client" {
+//		return true
+//	} else {
+//		return false
+//	}
+//}
+//func UserIsAdmin(c *gin.Context) bool {
+//	user := models.User{}
+//	initializers.GetDB().First(&user, "email = ?", GetUserEmail(c))
+//	if user.Type == "Admin" {
+//		return true
+//	} else {
+//		return false
+//	}
+//}
+
 func Signup(c *gin.Context) {
 	var body struct {
 		Email    string
