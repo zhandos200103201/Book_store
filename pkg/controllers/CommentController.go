@@ -20,6 +20,16 @@ func CreateComment(c *gin.Context) {
 		return
 	}
 
+	var admin models.User
+	initializers.GetDB().Find(&admin, "email=?", GetUserEmail(c))
+
+	if admin.Type == "Admin" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Only clients can leave a comments",
+		})
+		return
+	}
+
 	comment := models.Comment{Author: GetUserEmail(c), Title: body.Comment, Book: body.Title}
 	result := initializers.GetDB().Create(&comment)
 	if result.Error != nil {
@@ -55,6 +65,17 @@ func DeleteComment(c *gin.Context) {
 func GetAllComments(c *gin.Context) {
 	var comments []models.Comment
 	initializers.GetDB().Find(&comments)
+	c.JSON(http.StatusOK, gin.H{
+		"Comments": comments,
+	})
+}
+
+func GetCommentsForBook(c *gin.Context) {
+	book_id := c.Param("id")
+	var book models.Book
+	initializers.GetDB().Find(&book, "id=?", book_id)
+	var comments []models.Comment
+	initializers.GetDB().Find(&comments, "book=?", book.Title)
 	c.JSON(http.StatusOK, gin.H{
 		"Comments": comments,
 	})

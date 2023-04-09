@@ -12,6 +12,7 @@ var Router = func(router *gin.Engine) {
 	router.POST("/give_a_rating", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.GiveRating)
 	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.CreateComment)
 	router.GET("/comment", middleware.RequireAuth, controllers.GetAllComments)
+	router.GET("/comment/:id", middleware.RequireAuth, controllers.GetCommentsForBook)
 	router.DELETE("/comment/:id", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.DeleteComment)
 	router.GET("/books/:id", controllers.GetBook)
 	router.PUT("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.EditBook)
