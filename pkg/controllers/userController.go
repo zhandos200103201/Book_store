@@ -49,6 +49,7 @@ func Signup(c *gin.Context) {
 		Email    string
 		Password string
 		Username string
+		Type     string
 	}
 
 	if c.Bind(&body) != nil {
@@ -66,7 +67,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Username: body.Username, Email: body.Email, Password: hashedPass}
+	user := models.User{Type: body.Type, Username: body.Username, Email: body.Email, Password: hashedPass}
 	result := initializers.GetDB().Create(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

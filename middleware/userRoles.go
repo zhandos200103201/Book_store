@@ -28,12 +28,16 @@ func UserIsAdmin(c *gin.Context) {
 		var user models.User
 		initializers.GetDB().First(&user, claims["sub"])
 		if user.Type != "Admin" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Only Admins have the permission",
+			})
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		c.Next()
 	}
 }
-func UserIsClient(c *gin.Context) {
+
+func UserIsClientOrAdmin(c *gin.Context) {
 	tokenString, _ := c.Cookie("Authentication")
 	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -49,13 +53,17 @@ func UserIsClient(c *gin.Context) {
 
 		var user models.User
 		initializers.GetDB().First(&user, claims["sub"])
-		if user.Type != "Client" {
+		if user.Type != "Client" && user.Type != "Admin" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Only Admins and Clients have the permission",
+			})
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		c.Next()
 	}
 }
-func UserIsSeller(c *gin.Context) {
+
+func UserIsSellerOrAdmin(c *gin.Context) {
 	tokenString, _ := c.Cookie("Authentication")
 	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -71,7 +79,10 @@ func UserIsSeller(c *gin.Context) {
 
 		var user models.User
 		initializers.GetDB().First(&user, claims["sub"])
-		if user.Type != "Seller" {
+		if user.Type != "Seller" && user.Type != "Admin" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Only Admins and Sellers have the permission",
+			})
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		c.Next()
