@@ -3,6 +3,7 @@ package controllers
 import (
 	"Test2/initializers"
 	"Test2/pkg/models"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -70,13 +71,9 @@ func GetAllComments(c *gin.Context) {
 	})
 }
 
-func GetCommentsForBook(c *gin.Context) {
-	book_id := c.Param("id")
-	var book models.Book
-	initializers.GetDB().Find(&book, "id=?", book_id)
+func GetCommentsForBook(title string) []models.Comment {
 	var comments []models.Comment
-	initializers.GetDB().Find(&comments, "book=?", book.Title)
-	c.JSON(http.StatusOK, gin.H{
-		"Comments": comments,
-	})
+	initializers.GetDB().Find(&comments, "book=?", title)
+	fmt.Println(comments)
+	return comments
 }
