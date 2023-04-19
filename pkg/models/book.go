@@ -14,4 +14,5 @@ type Book struct {
 	Language    string
 	Image       string
 	Category    string
+	Quantity    int8
 }

@@ -10,7 +10,10 @@ import (
 func GetBooks(c *gin.Context) {
 	var books []models.Book
 	initializers.GetDB().Find(&books)
-	c.HTML(http.StatusOK, "books.html", gin.H{
+	//c.HTML(http.StatusOK, "books.html", gin.H{
+	//	"Books": books,
+	//})
+	c.JSON(http.StatusOK, gin.H{
 		"Books": books,
 	})
 }

@@ -33,6 +33,9 @@ var Router = func(router *gin.Engine) {
 	router.POST("/signup", controllers.Signup)
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", middleware.RequireAuth, controllers.SignOut)
+
+	router.POST("/addtoorder", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.Addtoorder)
+	router.GET("/myorders", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.Viewmyorders)
 	err := router.Run(":8080")
 	if err != nil {
 		return
