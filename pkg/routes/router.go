@@ -16,7 +16,7 @@ var Router = func(router *gin.Engine) {
 	// book actions
 	router.GET("/books", controllers.GetBooks)
 	router.POST("/books", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.CreateBook)
-	router.POST("/give_a_rating", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.GiveRating)
+	router.POST("/give_a_rating", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.GiveRating) // need change UserIs
 	router.GET("/books/:id", controllers.GetBook)
 	router.PUT("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.EditBook)
 	router.DELETE("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.DeleteBook)
@@ -24,7 +24,7 @@ var Router = func(router *gin.Engine) {
 	router.GET("/filter_by_rating", controllers.RatingFiltering)
 
 	//comments
-	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.CreateComment)
+	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.CreateComment) // also need to change
 	router.GET("/comment", middleware.RequireAuth, controllers.GetAllComments)
 	//router.GET("/comment/:id", middleware.RequireAuth, controllers.GetCommentsForBook)
 	router.DELETE("/comment/:id", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.DeleteComment)
