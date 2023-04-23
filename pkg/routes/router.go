@@ -16,7 +16,7 @@ var Router = func(router *gin.Engine) {
 	// book actions
 	router.GET("/books", controllers.GetBooks)
 	router.POST("/books", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.CreateBook)
-	router.POST("/give_a_rating", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.GiveRating) // need change UserIs
+	router.POST("/give_a_rating", middleware.RequireAuth, middleware.UserIsClient, controllers.GiveRating)
 	router.GET("/books/:id", controllers.GetBook)
 	router.PUT("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.EditBook)
 	router.DELETE("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.DeleteBook)
@@ -24,9 +24,9 @@ var Router = func(router *gin.Engine) {
 	router.GET("/filter_by_rating", controllers.RatingFiltering)
 
 	//comments
-	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.CreateComment) // also need to change
+	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClient, controllers.CreateComment)
 	router.GET("/comment", middleware.RequireAuth, controllers.GetAllComments)
-	//router.GET("/comment/:id", middleware.RequireAuth, controllers.GetCommentsForBook)
+	router.GET("/comment/:id", middleware.RequireAuth, controllers.GetCommentsByID)
 	router.DELETE("/comment/:id", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.DeleteComment)
 
 	// authentication
@@ -34,8 +34,8 @@ var Router = func(router *gin.Engine) {
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", middleware.RequireAuth, controllers.SignOut)
 
-	router.POST("/addtoorder", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.Addtoorder)
-	router.GET("/myorders", middleware.RequireAuth, middleware.UserIsClientOrAdmin, controllers.Viewmyorders)
+	router.POST("/addtoorder", middleware.RequireAuth, middleware.UserIsClient, controllers.Addtoorder)
+	router.GET("/myorders", middleware.RequireAuth, middleware.UserIsClient, controllers.Viewmyorders)
 	err := router.Run(":8080")
 	if err != nil {
 		return
