@@ -25,7 +25,7 @@ func GetBook(c *gin.Context) {
 	var target models.Book
 	initializers.GetDB().Find(&target, "id=?", id) // get book by with target id
 	comments := GetCommentsForBook(target.Title)   // getting comments for this book
-	c.HTML(http.StatusOK, "book.html", gin.H{ // give all data for book.html file
+	c.HTML(http.StatusOK, "book.html", gin.H{      // give all data for book.html file
 		"Book":     target,
 		"Comments": comments,
 	})
@@ -138,6 +138,22 @@ func RatingFiltering(c *gin.Context) {
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error": "failed to get books by rating",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": books,
+	})
+}
+func Search(c *gin.Context) {
+	name := c.Query("name") + "%" // getting book title
+	var books []models.Book
+	result := initializers.GetDB().Where("title like ?", name).Find(&books)
+
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "failed to get books by title",
 		})
 		return
 	}

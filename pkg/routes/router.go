@@ -22,6 +22,7 @@ var Router = func(router *gin.Engine) {
 	router.DELETE("/books/:id", middleware.RequireAuth, middleware.UserIsSellerOrAdmin, controllers.DeleteBook)
 	router.GET("/filter_by_prices", controllers.PriceFiltering)
 	router.GET("/filter_by_rating", controllers.RatingFiltering)
+	router.GET("/search", controllers.Search)
 
 	//comments
 	router.POST("/comment", middleware.RequireAuth, middleware.UserIsClient, controllers.CreateComment)
@@ -34,8 +35,8 @@ var Router = func(router *gin.Engine) {
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", middleware.RequireAuth, controllers.SignOut)
 
-	router.POST("/addtoorder", middleware.RequireAuth, middleware.UserIsClient, controllers.Addtoorder)
-	router.GET("/myorders", middleware.RequireAuth, middleware.UserIsClient, controllers.Viewmyorders)
+	router.POST("/addtoorder", middleware.RequireAuth, middleware.UserIsClient, controllers.AddToOrder)
+	router.GET("/myorders", middleware.RequireAuth, middleware.UserIsClient, controllers.ViewMyOrders)
 	err := router.Run(":8080")
 	if err != nil {
 		return
